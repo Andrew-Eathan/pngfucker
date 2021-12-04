@@ -37,7 +37,10 @@ Note, the above subparameters aren't proportional to the image size unless it's 
 If you pass negative values, the value will be set to: (image height) / (positive value of rmin or rmax)  
   
 #### -splits (def. 0)  
-This also performs a bitshift, however it doesn't reverse it afterwards, leaving the image glitched after a split.  
+An older alternative to -regions, where the image buffer is crunched and expanded to give the effect of the image being sliced in half horizontally.  
+This gives the effect of a bunch of pixels and bits missing from an image.  
+NOTE: This also performs a bitshift, but it doesn't reverse it afterwards, leaving the image glitched after a split.  
+This means that everything in your image will be glitched after a split. Might be good or bad depending on what you want!  
   
 #### -format (png/jpg/gif)
 Output image format. GIF support will come later when someone can actually comprehend the clusterfuck that is the GIF file format and make it easy for the rest of us to use it.  
@@ -106,3 +109,6 @@ This project uses two NPM packages to do its magic:
   
 ##### #12: Wobbuffet
 ![burh](https://cdn.discordapp.com/attachments/419150279137820673/915682846037921823/output.png)  
+
+###### if pngfucker is cool for you pls star kthx
+###### by andreweathan (if you're confused no that's not my real name
