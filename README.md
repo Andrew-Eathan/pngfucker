@@ -42,7 +42,7 @@ This gives the effect of a bunch of pixels and bits missing from an image.
 NOTE: This also performs a bitshift, but it doesn't reverse it afterwards, leaving the image glitched after a split.  
 This means that everything in your image will be glitched after a split. Might be good or bad depending on what you want!  
   
-#### -format (png/jpg/gif)
+#### -format (png/jpg/bmp)
 Output image format. GIF support will come later when someone can actually comprehend the clusterfuck that is the GIF file format and make it easy for the rest of us to use it.  
 Currently there are 3 accepted values for -format: "png", "jpg", and "bmp".  
   
@@ -77,13 +77,13 @@ This project uses two NPM packages to do its magic:
 ##### #1: Original Image
 !["noooooo"'s profile picture from the Eathan's Realm Discord server](https://cdn.discordapp.com/attachments/868443505045962783/916389615882076190/input.png)  
   
-##### #2: -input input.png -regions 2 -shift -1 -crunch 40 -iquality 1 -splits 2 -div 1 -oquality 20 -contrast 0.4
+##### #2: `-input input.png -regions 2 -shift -1 -crunch 40 -iquality 1 -splits 2 -div 1 -oquality 20 -contrast 0.4`
 ![xd](https://cdn.discordapp.com/attachments/868443505045962783/916381825625108520/output.png)  
   
 ##### #3: Same as #2
 ![e](https://cdn.discordapp.com/attachments/868443505045962783/916390652349120532/output.png)  
   
-##### #4: Same as #2, but -contrast 1
+##### #4: Same as #2, but `-contrast 1`
 ![Looks like an SCP](https://cdn.discordapp.com/attachments/868443505045962783/916382052117540925/output.png)  
   
 ##### #5: Same as #4
@@ -109,6 +109,18 @@ This project uses two NPM packages to do its magic:
   
 ##### #12: Wobbuffet
 ![burh](https://cdn.discordapp.com/attachments/419150279137820673/915682846037921823/output.png)  
-
+  
+##### #13: Original Image 2
+![hl2](https://cdn.discordapp.com/attachments/876672769490821123/916607510729859092/input.jpg)  
+  
+##### #14: #13 with `-input input.jpg -format jpg -iquality 10 -oquality 80 -regions 4 -splits 2 -shift 0 -rmin -8 -rmax -6 -contrast 0.5 -div 1 -crunch 20`
+![hl3](https://cdn.discordapp.com/attachments/876672769490821123/916607184547250187/output.jpg)  
+  
+##### #15: Same as #14 but with `-contrast -0.5 -crunch 30 -shift 3`
+![hl4](https://cdn.discordapp.com/attachments/876672769490821123/916606609638182962/output.jpg)  
+  
+##### #16: `-input input.jpg -format jpg -iquality 10 -oquality 10 -regions 4 -splits 2 -shift 0 -rmin -8 -rmax -6 -contrast 0.2 -div 1 -crunch 20`
+![hl5](https://cdn.discordapp.com/attachments/876672769490821123/916606384236269588/output.jpg)  
+  
 ###### if pngfucker is cool for you pls star kthx
 ###### by andreweathan (if you're confused no that's not my real name
