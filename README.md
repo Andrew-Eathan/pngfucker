@@ -111,16 +111,16 @@ This project uses two NPM packages to do its magic:
 ![burh](https://cdn.discordapp.com/attachments/419150279137820673/915682846037921823/output.png)  
   
 ##### #13: Original Image 2
-![hl2](https://cdn.discordapp.com/attachments/876672769490821123/916607510729859092/input.jpg)  
+![hl2](https://media.discordapp.net/attachments/876672769490821123/916607510729859092/input.jpg?width=320&height=256)  
   
 ##### #14: #13 with `-input input.jpg -format jpg -iquality 10 -oquality 80 -regions 4 -splits 2 -shift 0 -rmin -8 -rmax -6 -contrast 0.5 -div 1 -crunch 20`
-![hl3](https://cdn.discordapp.com/attachments/876672769490821123/916607184547250187/output.jpg)  
+![hl3](https://media.discordapp.net/attachments/876672769490821123/916607184547250187/output.jpg?width=320&height=256)  
   
 ##### #15: Same as #14 but with `-contrast -0.5 -crunch 30 -shift 3`
-![hl4](https://cdn.discordapp.com/attachments/876672769490821123/916606609638182962/output.jpg)  
+![hl4](https://media.discordapp.net/attachments/876672769490821123/916606609638182962/output.jpg?width=320&height=256)  
   
 ##### #16: `-input input.jpg -format jpg -iquality 10 -oquality 10 -regions 4 -splits 2 -shift 0 -rmin -8 -rmax -6 -contrast 0.2 -div 1 -crunch 20`
-![hl5](https://cdn.discordapp.com/attachments/876672769490821123/916606384236269588/output.jpg)  
+![hl5](https://media.discordapp.net/attachments/876672769490821123/916606384236269588/output.jpg?width=320&height=256)  
   
 ###### if pngfucker is cool for you pls star kthx
 ###### by andreweathan (if you're confused no that's not my real name
