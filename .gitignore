@@ -1,0 +1,6 @@
+*.jpg
+*.png
+node
+node_modules/
+*.json
+serverold.js

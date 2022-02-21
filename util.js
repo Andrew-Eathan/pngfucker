@@ -11,29 +11,34 @@ module.exports.debuglog = (str) => {
 
 // taken from here
 // https://github.com/micro-js/srand/blob/master/lib/index.js
+// modified to return an object of functions for my needs
 module.exports.srand = (seed) => {
-  // If we're passed a string, condense it down
-  // into a number
-  
-  if (typeof seed === 'string') {
-    str = seed
-    seed = 0xFF
-    for (var i = 0; i < str.length; i++) {
-      seed ^= str.charCodeAt(i)
-    }
-  }
-  
-  let originalseed = seed
+	// If we're passed a string, condense it down
+	// into a number
 
-  return function (max, min, resetseed) {
-    max = max || 1
-    min = min || 0
-    seed = (seed * 9301 + 49297) % 233280
+	if (typeof seed === 'string') {
+		str = seed
+		seed = 0xFF
+		for (var i = 0; i < str.length; i++) {
+			seed ^= str.charCodeAt(i)
+		}
+	}
 
-	let ret = min + (seed / 233280) * (max - min)
-	if (resetseed == true) seed = originalseed
-    return ret
-  }
+	let originalseed = seed
+
+	return {
+		gen: (min, max) => {
+			max = max || 1
+			min = min || 0
+			seed = (seed * 9301 + 49297) % 233280
+
+			let ret = min + (seed / 233280) * (max - min)
+			return ret
+		},
+
+		setseed: sd => seed = sd,
+		resetseed: sd => seed = originalseed
+	}
 }
 
 module.exports.writeBuffer = (target, data, offset, add) => {
@@ -43,11 +48,11 @@ module.exports.writeBuffer = (target, data, offset, add) => {
 }
 
 module.exports.randFloor = (min, max, rand) => {
-	return min + Math.floor(Math.random() * (max - min))
+	return Math.floor(rand.gen(min, max))
 }
 
 module.exports.randCeil = (min, max, rand) => {
-	return min + Math.ceil(Math.random() * (max - min))
+	return Math.ceil(rand.gen(min, max))
 }
 
 module.exports.processArgs = (args) => {

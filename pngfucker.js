@@ -36,7 +36,7 @@ node main.js
 		If you pass negative values, the value will be set to: (image height) / (positive value of rmin or rmax)
 	
 	-splits (def. 0)		= An older alternative to -regions, where the image buffer is crunched and expanded to give the effect of the image being sliced in half horizontally.
-							  This also performs a bitshift, however it doesn't reverse 
+							  This also performs a bitshift, however it doesn't reverse it afterwards, leaving the image glitched after a split.
 			
 	-format (png/jpg/gif)	= Output image format. GIF support will come later when someone can actually comprehend the clusterfuck that is the GIF file format and make it easy for the rest of us to use it
 		-iquality (0-100, def. 80)	= If the format is JPG, this will be its input JPG quality
@@ -51,6 +51,10 @@ node main.js
 	
 	-crunch (def. 100, 1-100)	= Resizes image to this percentage, and resizes them back to normal after, to crunch the pixels.
 								  NOTE: Don't add a percent sign! Resizing and crunching is nearest-neighbor, so you can enjoy crispy glitching.
+	-seed (def. random int between 0 and 65535 inclusive) 
+		  = Lets you reuse the same corruption style!
+			It's not guaranteed you will get the exact same image with each corruption.
+			Due to the way this entire corruption algorithm works
 */
 
 const pngfuck = require('./pngfuck.js');
@@ -80,6 +84,7 @@ let argv_template = util.processArgs(process.argv)
 	check("mul", 1)
 	check("div", 3)
 	check("crunch", 100)
+	check("seed", (Math.round(Math.random() * 65535)))
 }
 
 
@@ -116,9 +121,11 @@ let format_lookup = {
 }
 
 console.log(argv_template) // log for user to see
+console.log("Seed: " + argv_template.seed)
 
 let export_format = format_lookup[argv_template.format] || jimp.MIME_PNG
 let image_idx = 0
+let rand = util.srand(argv_template.seed)
 
 // main processing
 inputfiles.forEach(argv_input => {
@@ -136,6 +143,7 @@ inputfiles.forEach(argv_input => {
 		if (err) return console.log(err);
 		image_idx++
 		console.log(image_idx + ": [" + argv.input + "] -> [" + argv.output + "]")
+		rand.resetseed()
 		
 		let width = image.bitmap.width
 		let height = image.bitmap.height
@@ -154,15 +162,15 @@ inputfiles.forEach(argv_input => {
 		if (argv.crunch) image.resize(image.bitmap.width * (crunch / 100), image.bitmap.height * (crunch / 100), jimp.RESIZE_NEAREST_NEIGHBOR);
 		
 		if (argv.shift) {
-			pngfuck.shiftAll(image.bitmap, argv.shift)
+			pngfuck.shiftAll(image.bitmap, argv.shift, rand)
 		}
 		
 		if (argv.regions) {
-			pngfuck.regionalCorrupt(image.bitmap, argv)
+			pngfuck.regionalCorrupt(image.bitmap, argv, rand)
 		}
 		
 		if (argv.splits) {
-			pngfuck.bufferSplits(image.bitmap, argv.splits);
+			pngfuck.bufferSplits(image.bitmap, argv.splits, rand);
 		}
 		
 		// because png.background is useless
