@@ -62,6 +62,9 @@ Multiply output image size by this value.
 Divide output image size by this value.  
 Both -mul and -div are applied, in order of multiplication and then division, but preferably you should just use one, whatever fits your case.  
   
+#### -seed (def. random number between 0 and 65535)
+Lets you reuse corruption randomisation!  
+  
 #### -crunch (def. 100, 1-100)
 Resizes image to this percentage in pre-processing, and resizes them back to normal in post-processing, to "crunch" the pixels.  
 This gives a nice, pixel-like effect to the glitching, and it mostly works well with small images (256x256, 512x512, you get the idea)  
