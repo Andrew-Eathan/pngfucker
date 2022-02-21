@@ -12,7 +12,7 @@
 //    \ \__/ /        \ \__\
 //     \|__|/          \|__|
 //
-// by AndrewEathan (AndrewEathan#8783)
+// by andreweathan (andreweathan#8783)
 /*
 ---- USAGE ----
 All of the parameters below are optional. If no parameters are specified, it will convert an "input.png" into an "output.png" with the specified default values.
