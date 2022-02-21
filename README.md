@@ -1,7 +1,8 @@
 # pngfucker
 ### What is this?
 pngfucker is a tool that purposefully distorts and glitches images to create an unique effect that has never been implemented before.  
-It's very configurable and the output is randomized with each iteration, although i do plan to add seed-based glitching soon.
+It's very configurable and the output is randomized with each iteration, and now you can specify a numeric seed value!  
+I plan to add APNG support at some point. (screw gifs, they're awful)
 ### Quick story of how this was made
 Have you ever gotten tired of seeing this generic [JPEG glitch effect](https://cdn.discordapp.com/attachments/701973402973634681/916383906243178496/glitch.jpeg) and wanted something else?  
 That's also what happened to me. But then, a bright metaphorical lightbulb appeared above my head.  
