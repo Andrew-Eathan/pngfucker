@@ -6,7 +6,7 @@
 //   \/_/     \/_/ \/_/   \/_____/   \/_/     \/_____/   \/_____/   \/_/\/_/
 //
 
-//by AndrewEathan (AndrewEathan#8783)
+//by andreweathan (andreweathan#8783)
 
 const { shl, shr } = require('buffershift');
 const { writeBuffer, randFloor, randCeil, debuglog } = require('./util.js');
