@@ -99,32 +99,23 @@ This project uses two NPM packages to do its magic:
 ##### #7: Same as #2
 ![uhh](https://cdn.discordapp.com/attachments/626313822113759232/915689527199293540/output.png)  
   
-##### #8: Obliterated avatar of an old enemy, uses -crunch
+##### #8: #1 with `-seed 2 -regions 2 -shift -1 -crunch 40 -iquality 1 -splits 2 -div 1 -oquality 20 -contrast 1`
+![the](https://cdn.discordapp.com/attachments/868443505045962783/946441990369849344/output.png)  
+  
+##### #9: Obliterated avatar of an old enemy, uses -crunch
 ![scummius](https://media.discordapp.net/attachments/626313822113759232/915683554250342441/output.png)  
   
-##### #9: Same as #8, but less crunch
+##### #10: Same as #8, but less crunch
 ![scummius but more detail](https://cdn.discordapp.com/attachments/626313822113759232/915683608478502922/output.png)  
   
-##### #10: Obliterated avatar of Fasteroid
+##### #11: Obliterated avatar of Fasteroid
 ![dead](https://cdn.discordapp.com/attachments/626313822113759232/915683427712389151/output.png)  
   
-##### #11: Diagram showing the role of -crunch
+##### #12: Diagram showing the role of -crunch
 ![cronch](https://media.discordapp.net/attachments/419150279137820673/915685316436852796/unknown.png?width=538&height=360)  
   
-##### #12: Wobbuffet
+##### #13: Wobbuffet
 ![burh](https://cdn.discordapp.com/attachments/419150279137820673/915682846037921823/output.png)  
-  
-##### #13: Original Image 2
-![hl2](https://media.discordapp.net/attachments/876672769490821123/916607510729859092/input.jpg?width=320&height=256)  
-  
-##### #14: #13 with `-input input.jpg -format jpg -iquality 10 -oquality 80 -regions 4 -splits 2 -shift 0 -rmin -8 -rmax -6 -contrast 0.5 -div 1 -crunch 20`
-![hl3](https://media.discordapp.net/attachments/876672769490821123/916607184547250187/output.jpg?width=320&height=256)  
-  
-##### #15: Same as #14 but with `-contrast -0.5 -crunch 30 -shift 3`
-![hl4](https://media.discordapp.net/attachments/876672769490821123/916606609638182962/output.jpg?width=320&height=256)  
-  
-##### #16: `-input input.jpg -format jpg -iquality 10 -oquality 10 -regions 4 -splits 2 -shift 0 -rmin -8 -rmax -6 -contrast 0.2 -div 1 -crunch 20`
-![hl5](https://media.discordapp.net/attachments/876672769490821123/916606384236269588/output.jpg?width=320&height=256)  
   
 ###### if pngfucker is cool for you pls star kthx
 ###### by andreweathan (if you're confused no that's not my real name
