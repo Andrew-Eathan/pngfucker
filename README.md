@@ -9,7 +9,14 @@ Have you ever gotten tired of seeing this generic [JPEG glitch effect](https://c
 That's also what happened to me. But then, a bright metaphorical lightbulb appeared above my head.  
 More than a year ago, i was playing with a program i was working on that controlled the game Garry's Mod from my phone in the browser, however, the colors looked off.  
 I tried to bitshift the view, and i got this [peculiar glitching effect](https://cdn.discordapp.com/attachments/868443505045962783/915652437837242398/unknown.png) that looked cool, but i abandoned the controller project at that point because it was super slow.  
-Later, i separated that effect into its own tool called "pngfucker", it stayed like that for 2 months, and then i rewrote it! (So technically, this is a v2, not v1 like the pngfucker.js script file implies)
+Later, i separated that effect into its own tool called "pngfucker", it stayed like that for 2 months, and then i rewrote it! (So technically, this is a v2, not v1 like the pngfucker.js script file implies) 
+  
+### Setup
+This project uses three NPM packages to do its magic:  
+[`buffershift`](https://www.npmjs.com/package/buffershift)  
+[`jimp`](https://www.npmjs.com/package/jimp)  
+[`upng-js`](https://www.npmjs.com/package/upng-js)  
+Install them all with `npm i buffershift jimp upng-js` before running pngfucker!
   
 ### Usage
 The script has its own commandline argument handler, although it doesn't like arguments with spaces.  
@@ -85,14 +92,7 @@ Usually, it looks way too "bright" on a white background, so `-blackbg 1` adds a
 Resizes image to this percentage in pre-processing, and resizes them back to normal in post-processing, to "crunch" the pixels.  
 This gives a nice, pixel-like effect to the glitching, and it mostly works well with small images (256x256, 512x512, you get the idea)  
 This parameter is a good alternative to -div, because you won't have to resize it back to normal size afterwards.  
-NOTE: Don't add a percent sign! Resizing and crunching is nearest-neighbor, so you can enjoy crispy glitching.  
-  
-### Setup
-This project uses three NPM packages to do its magic:  
-[`buffershift`](https://www.npmjs.com/package/buffershift)  
-[`jimp`](https://www.npmjs.com/package/jimp)  
-[`upng-js`](https://www.npmjs.com/package/upng-js)  
-Install them all with `npm i buffershift jimp upng-js` before running pngfucker!  
+NOTE: Don't add a percent sign! Resizing and crunching is nearest-neighbor, so you can enjoy crispy glitching.   
   
 ### Examples of Usage
 ##### #1: Original Image
