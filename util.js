@@ -1,17 +1,11 @@
 
 // UTIL
 // too lazy to make cool text for this file
-// by AndrewEathan (AndrewEathan#8783)
-
-module.exports.debuglog = (str) => {
-	//if (argv["verbose"] == "yes") {
-	//	console.log(str)
-	//}
-}
+// by andreweathan (andreweathan#8783)
 
 // taken from here
 // https://github.com/micro-js/srand/blob/master/lib/index.js
-// modified to return an object of functions for my needs
+// i modified it to return an object of functions for my needs
 module.exports.srand = (seed) => {
 	// If we're passed a string, condense it down
 	// into a number

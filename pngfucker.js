@@ -12,57 +12,20 @@
 //    \ \__/ /        \ \__\
 //     \|__|/          \|__|
 //
-// by AndrewEathan (AndrewEathan#8783)
+// by andreweathan (andreweathan#8783)
 /*
 ---- USAGE ----
-All of the parameters below are optional. If no parameters are specified, it will convert an "input.png" into an "output.png" with the specified default values.
-node main.js
-	-input (path)			= Input path relative to script. If a folder is specified, it will batch convert all of the images in that folder.
-							  (COMING SOON) If the format parameter is "gif" and the -fps parameter is specified, it will create a GIF using the frames in the folder. 
-							  (COMING SOON) If the input is a GIF and the format parameter is "gif", it will glitch the GIF, otherwise it picks the first frame in the GIF and glitches that.
-	
-	-output (path)			= Output path relative to script. If a folder is specified, batch conversions will be written to it.
-							  If an output path is a folder but an input is a file, the output will be written in the output folder as "output.png".
-							  If the output is a folder, the input is a GIF and the format is not a GIF, the GIF's frames will be glitched and written to the folder.
-							  If the output isn't a folder in that case, the default output is ignored, and output will be in "(gif_name)/(frame).(format)"
-							  If the output is a folder, but does not exist, images will be written to "(input_folder)_out/(frame).(format)"
-	
-	-shift (def. 3)			= Bitshift the image buffer to the right by this amount, negative amounts shift to the left.
-	
-	-regions (def. 4)		= Glitching regions. This bitshifts the image buffer in a localised area and writes random data to some pixels.
-		-rmin (def. -8)			= Minimum region size in height pixels.
-		-rmax (def. -5)			= Maximum region size in height pixels.
-		Note, the above subparameters aren't proportional to the image size unless it's a negative number!
-		If you pass negative values, the value will be set to: (image height) / (positive value of rmin or rmax)
-	
-	-splits (def. 0)		= An older alternative to -regions, where the image buffer is crunched and expanded to give the effect of the image being sliced in half horizontally.
-							  This also performs a bitshift, however it doesn't reverse it afterwards, leaving the image glitched after a split.
-			
-	-format (png/jpg/gif)	= Output image format. GIF support will come later when someone can actually comprehend the clusterfuck that is the GIF file format and make it easy for the rest of us to use it
-		-iquality (0-100, def. 80)	= If the format is JPG, this will be its input JPG quality
-		-oquality (0-100, def. 80)	= If the format is JPG, this will be its output JPG quality
-		Currently there are 3 accepted values for -format: "png", "jpg", and "bmp".
-	
-	-contrast (-1 to 1, def 0)	= Image contrast pre-processing. 0 is no change, -1 is the lowest contrast, 1 is the highest.
-	
-	-mul (def. 1)			= Multiply output image size by this value.
-	-div (def. 3)			= Divide output image size by this value.
-	Both of the above parameters are applied, in order of multiplication and then division, but preferably you should just use one.
-	
-	-crunch (def. 100, 1-100)	= Resizes image to this percentage, and resizes them back to normal after, to crunch the pixels.
-								  NOTE: Don't add a percent sign! Resizing and crunching is nearest-neighbor, so you can enjoy crispy glitching.
-	-seed (def. random int between 0 and 65535 inclusive) 
-		  = Lets you reuse the same corruption style!
-			It's not guaranteed you will get the exact same image with each corruption.
-			Due to the way this entire corruption algorithm works
+The usage text has been moved to the GitHub description, please check that instead!
 */
 
+// requiresss
 const pngfuck = require('./pngfuck.js');
 const util = require('./util.js')
 const jimp = require("jimp")
 const fs = require("fs")
+const upng = require("upng-js")
 
-// helper
+// helper to set a default value if there is no value specified
 function check(key, param) {
 	argv_template[key] = (argv_template[key] != undefined) ? argv_template[key] : param;
 }
@@ -82,11 +45,12 @@ let argv_template = util.processArgs(process.argv)
 	check("oquality", 80)
 	check("contrast", 0)
 	check("mul", 1)
-	check("div", 3)
-	check("crunch", 100)
+	check("div", 1)
+	check("crunch", 80)
 	check("seed", (Math.round(Math.random() * 65535)))
+	check("clamp", 1)
+	check("staticseed", 0)
 }
-
 
 // handle input/output being folders
 let input = argv_template.input
@@ -114,89 +78,104 @@ else
 	if (input_isfolder) argv_template.output = argv_template.input + "_out"; else argv_template.output = "output";
 }
 
+// for jimp
 let format_lookup = {
 	"png": jimp.MIME_PNG,
 	"jpg": jimp.MIME_JPEG,
 	"bmp": jimp.MIME_BMP
 }
 
-console.log(argv_template) // log for user to see
+// log for user to see these
+console.log(argv_template)
 console.log("Seed: " + argv_template.seed)
 
+// find the format to use or a replacement, just not nothing
 let export_format = format_lookup[argv_template.format] || jimp.MIME_PNG
-let image_idx = 0
-let rand = util.srand(argv_template.seed)
+let image_idx = 0; // used to track image count in debug logging
+let rand = util.srand(argv_template.seed) // instantiate seeded random
 
-// main processing
+// main processing, iterates over all input files
 inputfiles.forEach(argv_input => {
 	let argv = JSON.parse(JSON.stringify(argv_template)) // clone from template
 	
 	// remove extension from input
 	let argv_output = argv_input.split(".")
-	argv_output.pop()
+	let argv_ext = argv_output.pop()
 	argv_output = argv_output.join(" ")
 	
 	argv.input = input_isfolder ? (argv.input + "/" + argv_input) : argv.input
 	argv.output = output_isfolder ? (argv.output + "/" + argv_output + "." + argv.format) : argv.output + "." + argv.format
 	
+	// central APNG processing, define label to escape out of the if statement when we want to
+	let pngdata
+	exitpng: if (argv_ext == "png" || argv_ext == "apng") {
+		pngdata = upng.decode(fs.readFileSync(argv.input))
+		if (pngdata.frames.length < 2) break exitpng; // this is a regular one-frame png, work on it normally
+		
+		image_idx++;
+		console.log(image_idx + " (APNG): [" + argv.input + "] -> [" + argv.output + "]")
+		
+		let frames = upng.toRGBA8(pngdata) // get all the frame data we need from the apng
+		let cframes = [] // this stores all the corrupted frames to later be stitched in encoding
+		let delays = [] // this stores the frame delays in numbers, used when encoding
+		
+		// populate delays
+		pngdata.frames.forEach(frame => delays.push(frame.delay))
+		
+		// calculate final width and height to pass to encoding, we can't comfortably find this in encoding when all we get is a pile of RGBA
+		let { w, h } = pngfuck.calcWH(pngdata.width, pngdata.height, argv)
+		let i = 0 // frame counter, used in progress logging
+		
+		// process each frame
+		frames.forEach(frame => {
+			// create image and populate it with the frame's RGBA pixel values
+			let image = new jimp({
+				data: Buffer.from(frame), 
+				width: pngdata.width, 
+				height: pngdata.height
+			}, _ => {}) // empty callback, we don't need it (but it complains if i don't add it)
+			
+			// if staticseed is 0, it makes a really jittery effect to the corruption, which looks nice 
+			// (not so nice for epileptic people tho)
+			if (argv.staticseed == 1) rand.resetseed();
+			
+			// pass image to my corruption function plus corruption arguments and the random object
+			let corrupt = pngfuck.corruptImage(image, rand, argv)
+			cframes.push(corrupt.bitmap.data) // add corrupted frame to list
+			
+			i++; // advance, only used in logging
+			
+			// fancy logs
+			let size = corrupt.bitmap.data.length;
+			process.stdout.write("   [=] Frame " + i + "/" + frames.length + ": " + size + " bytes (" + Math.round(i / frames.length * 100) + "%)      \r");
+		})
+		
+		// more fancy logs
+		process.stdout.write("\nEncoding APNG...      \r");
+			// encode corrupted frames at the worst quality because it looks pretty good
+			let encoded = upng.encode(cframes, w, h, 256, delays);
+			fs.writeFileSync(argv.output, Buffer.from(encoded)); // write apng buffer
+		process.stdout.write("Encoding APNG... Done!     \n");
+		
+		return
+	}
+	
+	// standard png/jpg/bmp processor, read file and work on the image
 	jimp.read(argv.input, (err, image) => {
-		if (err) return console.log(err);
-		image_idx++
+		if (err) return console.log("ERROR on file " + argv.input + ": " + err);
+		
+		// advance
+		image_idx++;
+		
+		// and log
 		console.log(image_idx + ": [" + argv.input + "] -> [" + argv.output + "]")
-		rand.resetseed()
 		
-		let width = image.bitmap.width
-		let height = image.bitmap.height
-		let crunch = argv.crunch
-		let final_multiplier = argv.mul / argv.div;
+		// reset changes to the seed after randomisations, despite the name this doesn't actually change the input seed
+		rand.resetseed();
 		
-		// look in Usage for explanation
-		if (argv.rmin < 0) argv.rmin = Math.round(height / Math.abs(argv.rmin));
-		if (argv.rmax < 0) argv.rmax = Math.round(height / Math.abs(argv.rmax));
-		
-		image.resize(width * final_multiplier, height * final_multiplier)
-			.contrast(argv.contrast)
-			.quality(argv.iquality)
-			.rgba(true) // for some reason if you disable this it breaks the shit out of the image, it's not even in an enjoyable way
-		
-		if (argv.crunch) image.resize(image.bitmap.width * (crunch / 100), image.bitmap.height * (crunch / 100), jimp.RESIZE_NEAREST_NEIGHBOR);
-		
-		if (argv.shift) {
-			pngfuck.shiftAll(image.bitmap, argv.shift, rand)
-		}
-		
-		if (argv.regions) {
-			pngfuck.regionalCorrupt(image.bitmap, argv, rand)
-		}
-		
-		if (argv.splits) {
-			pngfuck.bufferSplits(image.bitmap, argv.splits, rand);
-		}
-		
-		// because png.background is useless
-		// png shift corruption tends to make a lot of pixels transparent (and black also looks cool as a background for them)
-		for (let i = 0; i < image.bitmap.data.length; i += 4) {
-			let r = image.bitmap.data[i    ];
-			let g = image.bitmap.data[i + 1];
-			let b = image.bitmap.data[i + 2];
-			let a = image.bitmap.data[i + 3];
-			
-			r = r * (a / 255)
-			g = g * (a / 255)
-			b = b * (a / 255)
-			a = 255
-			
-			image.bitmap.data[i    ] = r;
-			image.bitmap.data[i + 1] = g;
-			image.bitmap.data[i + 2] = b;
-			image.bitmap.data[i + 3] = a;
-		}
-		
-		// resize to normal after crunching
-		if (argv.crunch) image.resize(width * final_multiplier, height * final_multiplier, jimp.RESIZE_NEAREST_NEIGHBOR);
-		
-		// apply postprocessing outputquality
-		image.quality(argv.oquality)
+		// corrupt and write the image, then if there's any more it will do them too (the foreach)
+		image = pngfuck.corruptImage(image, rand, argv)
 		image.write(argv.output)
 	})
 })
+

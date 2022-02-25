@@ -6,10 +6,11 @@
 //   \/_/     \/_/ \/_/   \/_____/   \/_/     \/_____/   \/_____/   \/_/\/_/
 //
 
-//by AndrewEathan (AndrewEathan#8783)
+//by andreweathan (andreweathan#8783)
 
 const { shl, shr } = require('buffershift');
 const { writeBuffer, randFloor, randCeil, debuglog } = require('./util.js');
+const jimp = require("jimp")
 
 // performs local shifting and byte swaps
 module.exports.regionalCorrupt = (bitmap /*JIMP image data, or {width, height, image buffer} object*/, settings /*:object*/, srand /*rand object*/) => {
@@ -42,7 +43,7 @@ module.exports.shiftAll = (bitmap /*JIMP image data, or {width, height, image bu
 	if (amount < 0) shl(bitmap.data, Math.abs(amount)); else shr(bitmap.data, amount);
 }
 
-module.exports.bufferSplits = (bitmap /*JIMP image data, or {width, height, image buffer} object*/, splitamount /* number */, srand /*rand object*/) => {
+module.exports.bufferSplits = (bitmap /*JIMP bitmap data, or {width, height, image buffer} object*/, splitamount /* number */, srand /*rand object*/) => {
 	//split buffer into buffers
 	if (splitamount > 0) {
 		let buffers = []
@@ -56,4 +57,88 @@ module.exports.bufferSplits = (bitmap /*JIMP image data, or {width, height, imag
 		
 		bitmap.data = Buffer.concat(buffers)
 	}
+}
+
+let { regionalCorrupt, shiftAll, bufferSplits } = module.exports;
+
+// needed to properly deal with library conflicts
+module.exports.calcWH = (width, height, argv) => {
+	let fmul = argv.mul / argv.div;
+	
+	return {
+		w: width * fmul, 
+		h: height * fmul
+	}
+}
+
+module.exports.corruptImage = (image /*JIMP image data (NOT BITMAP)*/, rand /*RNG object*/, argv /*corruption arguments*/) => {
+	let width = image.bitmap.width
+	let height = image.bitmap.height
+	let crunch = argv.crunch
+	let final_multiplier = argv.mul / argv.div;
+	
+	// look in Usage for explanation
+	if (argv.rmin < 0) argv.rmin = Math.round(height / Math.abs(argv.rmin));
+	if (argv.rmax < 0) argv.rmax = Math.round(height / Math.abs(argv.rmax));
+	
+	image.resize(width * final_multiplier, height * final_multiplier)
+		.contrast(argv.contrast)
+		.quality(argv.iquality)
+		.rgba(true) // for some reason if you disable this it breaks the shit out of the image, it's not even in an enjoyable waywrite("testi.png")
+	
+	let fmul = crunch / 100
+	if (argv.crunch) image.resize(width * fmul, height * fmul, jimp.RESIZE_NEAREST_NEIGHBOR);
+	
+	// to clamp the corruption to the image's "area"
+	let og_copy
+	if (argv.clamp == 1) {
+		og_copy = Buffer.alloc(image.bitmap.data.length)
+		image.bitmap.data.copy(og_copy)
+	}
+	
+	// main corruption
+	if (argv.shift) {
+		shiftAll(image.bitmap, argv.shift, rand)
+	}
+	
+	if (argv.regions) {
+		regionalCorrupt(image.bitmap, argv, rand)
+	}
+	
+	if (argv.splits) {
+		bufferSplits(image.bitmap, argv.splits, rand);
+	}
+	
+	// because png.background is useless
+	// png shift corruption tends to make a lot of pixels transparent (and black also looks cool as a background for them)
+	if (argv.clamp == 1)
+		for (let i = 0; i < image.bitmap.data.length; i += 4) {
+			let r = image.bitmap.data[i    ];
+			let g = image.bitmap.data[i + 1];
+			let b = image.bitmap.data[i + 2];
+			let a = image.bitmap.data[i + 3];
+			
+			let r1 = og_copy[i    ];
+			let g1 = og_copy[i + 1];
+			let b1 = og_copy[i + 2];
+			let a1 = og_copy[i + 3];
+			
+			let delta = (r1 - r) / 3 + (g1 - g) / 3 + (b1 - b) / 3
+			
+			if (a != a1 && delta < 128) {
+				a = a1
+			
+				image.bitmap.data[i    ] = r;
+				image.bitmap.data[i + 1] = g;
+				image.bitmap.data[i + 2] = b;
+				image.bitmap.data[i + 3] = a;
+			}
+		}
+	
+	// resize to normal after crunching
+	if (argv.crunch) image.resize(width * final_multiplier, height * final_multiplier, jimp.RESIZE_NEAREST_NEIGHBOR);
+	
+	// apply postprocessing outputquality
+	image.quality(argv.oquality)
+	return image
 }
