@@ -149,5 +149,11 @@ NOTE: Don't add a percent sign! Resizing and crunching is nearest-neighbor, so y
 ##### #18: #16 with `-seed 4 -regions 4 -shift 0 -splits 3 -div 1 -crunch 50 -clamp 0 -staticseed 1`
 ![circle](https://cdn.discordapp.com/attachments/832522685824499762/946852126246703234/output.png)
 
+##### #19: Original Image #4
+![balz](https://cdn.discordapp.com/attachments/832522685824499762/946867931617308672/apngtest.png)
+
+##### #20: #19 with `-seed 4 -regions 3 -shift 0 -splits 2 -div 1 -crunch 70 -clamp 1 -staticseed 0 -mul 1.9`
+![ballz](https://cdn.discordapp.com/attachments/832522685824499762/946867303855820870/output.png)
+
 ###### if pngfucker is cool for you pls star kthx
 ###### by andreweathan (if you're confused no that's not my real name
