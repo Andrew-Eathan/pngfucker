@@ -35,11 +35,11 @@ function check(key, param) {
 let argv_template = util.processArgs(process.argv)
 {
 	check("input", "input.png")
-	check("shift", 3)
+	check("shift", 0)
 	check("regions", 4)
 	check("rmin", -20)
 	check("rmax", -10)
-	check("splits", 0)
+	check("splits", 2)
 	check("format", "png")
 	check("iquality", 80)
 	check("oquality", 80)
@@ -50,6 +50,7 @@ let argv_template = util.processArgs(process.argv)
 	check("seed", (Math.round(Math.random() * 65535)))
 	check("clamp", 1)
 	check("staticseed", 0)
+	check("blackbg", 0)
 }
 
 // handle input/output being folders
@@ -178,4 +179,3 @@ inputfiles.forEach(argv_input => {
 		image.write(argv.output)
 	})
 })
-

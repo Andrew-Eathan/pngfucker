@@ -111,7 +111,7 @@ module.exports.corruptImage = (image /*JIMP image data (NOT BITMAP)*/, rand /*RN
 	
 	// because png.background is useless
 	// png shift corruption tends to make a lot of pixels transparent (and black also looks cool as a background for them)
-	if (argv.clamp == 1)
+	if (argv.clamp == 1 && argv.blackbg == 0)
 		for (let i = 0; i < image.bitmap.data.length; i += 4) {
 			let r = image.bitmap.data[i    ];
 			let g = image.bitmap.data[i + 1];
@@ -125,7 +125,8 @@ module.exports.corruptImage = (image /*JIMP image data (NOT BITMAP)*/, rand /*RN
 			
 			let delta = (r1 - r) / 3 + (g1 - g) / 3 + (b1 - b) / 3
 			
-			if (a != a1 && delta < 128) {
+			// if the pixel isn't corrupted enough, back to normal it goes
+			if (a != a1 && delta < 64) {
 				a = a1
 			
 				image.bitmap.data[i    ] = r;
@@ -133,6 +134,23 @@ module.exports.corruptImage = (image /*JIMP image data (NOT BITMAP)*/, rand /*RN
 				image.bitmap.data[i + 2] = b;
 				image.bitmap.data[i + 3] = a;
 			}
+		}
+	else if (argv.blackbg == 1)
+		for (let i = 0; i < image.bitmap.data.length; i += 4) {
+			let r = image.bitmap.data[i    ];
+			let g = image.bitmap.data[i + 1];
+			let b = image.bitmap.data[i + 2];
+			let a = image.bitmap.data[i + 3];
+			
+			r = r * (a / 255)
+			g = g * (a / 255)
+			b = b * (a / 255)
+			a = 255
+			
+			image.bitmap.data[i    ] = r;
+			image.bitmap.data[i + 1] = g;
+			image.bitmap.data[i + 2] = b;
+			image.bitmap.data[i + 3] = a;
 		}
 	
 	// resize to normal after crunching
