@@ -77,8 +77,9 @@ Lets you reuse corruption randomisation!
 If no seed is specified, a random one is picked.  
 
 #### `-staticseed (def. 0, 0 - no, 1 - yes)`
-Using `-staticseed 1` means that the internal seed for each frame of an APNG will be different, creating a jittery corruption effect to it.  
-That doesn't affect the reproducibility of the APNG however, and using the same -seed value will yield the same corruption with APNGs!  
+Using `-staticseed 0` means that the internal seed for each frame of an APNG will be different, creating a jittery corruption effect to it.  
+Using `-staticseed 1` keeps it constant across all frames, so that your eyes don't go pop from the corruption  
+That doesn't affect the ability to recreate the APNG corruption, so using the same -seed value will yield the same corruption with APNGs!  
   
 #### `-clamp (def. 1, 0 - no, 1 - yes)`
 This "localises" the corruption on a transparent image/APNG, ignoring corruption outside the "main area" of the image (unless its pixel delta is >64)  
