@@ -16,7 +16,7 @@ This project uses three NPM packages to do its magic:
 [`buffershift`](https://www.npmjs.com/package/buffershift)  
 [`jimp`](https://www.npmjs.com/package/jimp)  
 [`upng-js`](https://www.npmjs.com/package/upng-js)  
-Install them all with `npm i buffershift jimp upng-js` before running pngfucker!
+Install them all with `npm i (package)` before running pngfucker!
   
 ### Usage
 The script has its own commandline argument handler, although it doesn't like arguments with spaces.  
