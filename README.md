@@ -94,7 +94,11 @@ Resizes image to this percentage in pre-processing, and resizes them back to nor
 This gives a nice, pixel-like effect to the glitching, and it mostly works well with small images (256x256, 512x512, you get the idea)  
 This parameter is a good alternative to -div, because you won't have to resize it back to normal size afterwards.  
 NOTE: Don't add a percent sign! Resizing and crunching is nearest-neighbor, so you can enjoy crispy glitching.   
-  
+# 
+# 
+## *\[epilepsy warning just in case, especially at the animated examples (11-20)\]*
+# 
+#
 ### Examples of Usage
 ##### #1: Original Image
 !["noooooo"'s profile picture from the Eathan's Realm Discord server](https://cdn.discordapp.com/attachments/868443505045962783/916389615882076190/input.png)  
