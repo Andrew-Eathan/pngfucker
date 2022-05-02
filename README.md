@@ -1,4 +1,5 @@
-# pngfucker
+![pngfucker](https://user-images.githubusercontent.com/42521608/166221876-85ced79b-7069-4e0a-ab1b-0d06eb057887.png)
+# pngfucker v1.2
 ### What is this?
 pngfucker is a tool that purposefully distorts and glitches images to create an unique effect that has never been implemented before.  
 It's very configurable and the output is randomized with each iteration, and now you can specify a numeric seed value!  
