@@ -21,7 +21,8 @@ Install them all with `npm i (package)` before running pngfucker!
   
 ### Usage
 The script has its own commandline argument handler, although it doesn't like arguments with spaces.  
-All of the parameters below are optional. If no parameters are specified, it will convert an "input.png" into an "output.png" with the specified default values.
+All of the parameters below are optional. If no parameters are specified, it will convert an "input.png" into an "output.png" with the specified default values.  
+Generally, the trick to getting a good-looking corrupted image is to know how each of the options affects the image, and to experiment around a little until you get something that looks nice!  
   
 `node pngfucker.js (args)`  
 #### `-input (path)`
