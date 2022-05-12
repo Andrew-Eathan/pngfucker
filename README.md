@@ -13,7 +13,8 @@ I tried to bitshift the view, and i got this [peculiar glitching effect](https:/
 Later, i separated that effect into its own tool called "pngfucker", it stayed like that for 2 months, and then i rewrote it! (So technically, this is a v2, not v1 like the pngfucker.js script file implies) 
   
 ### Setup
-This project uses three NPM packages to do its magic:  
+This project uses node.js, so you need it to run pngfucker!  
+pngfucker uses three NPM packages to do its magic:  
 [`buffershift`](https://www.npmjs.com/package/buffershift)  
 [`jimp`](https://www.npmjs.com/package/jimp)  
 [`upng-js`](https://www.npmjs.com/package/upng-js)  
