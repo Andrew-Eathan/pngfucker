@@ -23,7 +23,8 @@ const pngfuck = require('./pngfuck.js');
 const util = require('./util.js')
 const jimp = require("jimp")
 const fs = require("fs")
-const upng = require("upng-js")
+const upng = require("upng-js");
+const { argv } = require('process');
 
 // helper to set a default value if there is no value specified
 function check(key, param) {
@@ -35,22 +36,56 @@ function check(key, param) {
 let argv_template = util.processArgs(process.argv)
 {
 	check("input", "input.png")
+
+	// bitshifts the entire image buffer by this value, negative values go backwards
 	check("shift", 0)
+
+	// splits the image into corrupted subsections and swaps their bytes around
 	check("regions", 4)
 	check("rmin", -20)
 	check("rmax", -10)
+	
+	// simulates chunks of data vanishing from the image down to the bits, creating a horizontal corrupted "shift" effect
 	check("splits", 2)
+
+	// export format
 	check("format", "png")
+
+	// changes jpg input/output quality, but i haven't actually tested and proven this works, so...
 	check("iquality", 80)
 	check("oquality", 80)
+
+	// applies contrast to images, -1 to 1 where 0 is neutral
 	check("contrast", 0)
+
+	// multiplies/divides the image size by these amounts
 	check("mul", 1)
 	check("div", 1)
+
+	// downscales image by this percentage in pre-processing, and rescales it back to the original size in post-processing
+	// this gives a neat chunky effect to the image while also boosting corruption speed
 	check("crunch", 80)
+
+	// corruption seed
 	check("seed", (Math.round(Math.random() * 65535)))
+
+	// does some math on transparent images to keep corruption only to opaque pixels
 	check("clamp", 1)
+
+	// usually animated corruption shuffles the seed every frame, this prevents that
 	check("staticseed", 0)
+
+	// whether to underlay a black background under corrupted images
+	// corruption tends to mangle alpha component of pixels, switching random pixels between on/off
 	check("blackbg", 0)
+
+	// given a single-frame png, this turns it into an animated corrupted png
+	check("frames", 0)
+	check("fps", 0)
+
+	// chance for animated corruption frames to be left uncorrupted, 0-100
+	check("breaks", 0)
+	check("randshift", 0) // because shift alone can look ugly, this is how much randomness shift can have
 }
 
 // handle input/output being folders
@@ -111,7 +146,11 @@ inputfiles.forEach(argv_input => {
 	let pngdata
 	exitpng: if (argv_ext == "png" || argv_ext == "apng") {
 		pngdata = upng.decode(fs.readFileSync(argv.input))
-		if (pngdata.frames.length < 2) break exitpng; // this is a regular one-frame png, work on it normally
+		let turnAnimated = pngdata.frames.length < 2 && argv.frames > 0; // if user wants to turn a single frame png into an animated corruption
+
+		if (pngdata.frames.length < 2) 
+			if (argv.frames <= 0) 
+				break exitpng; // this is a regular one-frame png, work on it normally
 		
 		image_idx++;
 		console.log(image_idx + " (APNG): [" + argv.input + "] -> [" + argv.output + "]")
@@ -119,9 +158,21 @@ inputfiles.forEach(argv_input => {
 		let frames = upng.toRGBA8(pngdata) // get all the frame data we need from the apng
 		let cframes = [] // this stores all the corrupted frames to later be stitched in encoding
 		let delays = [] // this stores the frame delays in numbers, used when encoding
+
+		if (turnAnimated) {
+			let frame = frames[0];
+			let delay = 1 / argv.fps * 1000;
+
+			delays.push(delay);
+			for (let i = 0; i < argv.frames - 1; i++) {
+				frames.push(frame);
+				delays.push(delay);
+			}
+		}
 		
 		// populate delays
-		pngdata.frames.forEach(frame => delays.push(frame.delay))
+		if (!turnAnimated)
+			pngdata.frames.forEach(frame => delays.push(frame.delay))
 		
 		// calculate final width and height to pass to encoding, we can't comfortably find this in encoding when all we get is a pile of RGBA
 		let { w, h } = pngfuck.calcWH(pngdata.width, pngdata.height, argv)
@@ -129,6 +180,8 @@ inputfiles.forEach(argv_input => {
 		
 		// process each frame
 		frames.forEach(frame => {
+			let normalchance = rand.gen(0.0000000001, 100) <= argv.breaks;
+
 			// create image and populate it with the frame's RGBA pixel values
 			let image = new jimp({
 				data: Buffer.from(frame), 
@@ -141,7 +194,7 @@ inputfiles.forEach(argv_input => {
 			if (argv.staticseed == 1) rand.resetseed();
 			
 			// pass image to my corruption function plus corruption arguments and the random object
-			let corrupt = pngfuck.corruptImage(image, rand, argv)
+			let corrupt = pngfuck.corruptImage(image, rand, argv, normalchance)
 			cframes.push(corrupt.bitmap.data) // add corrupted frame to list
 			
 			i++; // advance, only used in logging

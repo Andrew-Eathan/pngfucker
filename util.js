@@ -18,15 +18,25 @@ module.exports.srand = (seed) => {
 		}
 	}
 
-	let originalseed = seed
+	let originalseed = seed;
 
 	return {
-		gen: (min, max) => {
+		// if shuffleSeed is true/truthy, the generator will return the next iteration's number
+		// but it won't actually shuffle the seed
+		// this is useful to keep backwards compatibility (i hope) because any seed shuffles affects all further shuffles and further results
+		// resulting in a different image
+
+		gen: (min, max, shuffleSeed) => {
+			let tmpseed = 0;
+
 			max = max || 1
 			min = min || 0
-			seed = (seed * 9301 + 49297) % 233280
+			if (shuffleSeed) tmpseed = seed; 
 
+			seed = (seed * 9301 + 49297) % 233280;
 			let ret = min + (seed / 233280) * (max - min)
+
+			if (shuffleSeed) seed = tmpseed;
 			return ret
 		},
 
@@ -35,6 +45,7 @@ module.exports.srand = (seed) => {
 	}
 }
 
+global.loggg = ""
 module.exports.writeBuffer = (target, data, offset, add) => {
 	for(let i = 0; i < data.length; i++){
 		target[i + offset] = data[i] + (add ? add : 0)
@@ -42,7 +53,9 @@ module.exports.writeBuffer = (target, data, offset, add) => {
 }
 
 module.exports.randFloor = (min, max, rand) => {
-	return Math.floor(rand.gen(min, max))
+	var penis = Math.floor(rand.gen(min, max))
+	loggg += penis + "\n"
+	return penis
 }
 
 module.exports.randCeil = (min, max, rand) => {

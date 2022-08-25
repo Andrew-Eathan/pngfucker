@@ -71,7 +71,7 @@ module.exports.calcWH = (width, height, argv) => {
 	}
 }
 
-module.exports.corruptImage = (image /*JIMP image data (NOT BITMAP)*/, rand /*RNG object*/, argv /*corruption arguments*/) => {
+module.exports.corruptImage = (image /*JIMP image data (NOT BITMAP)*/, rand /*RNG object*/, argv /*corruption arguments*/, dontglitch = false /*whether to not apply corruption effects*/) => {
 	let width = image.bitmap.width
 	let height = image.bitmap.height
 	let crunch = argv.crunch
@@ -87,7 +87,7 @@ module.exports.corruptImage = (image /*JIMP image data (NOT BITMAP)*/, rand /*RN
 		.rgba(true) // for some reason if you disable this it breaks the shit out of the image, it's not even in an enjoyable waywrite("testi.png")
 	
 	let fmul = crunch / 100
-	if (argv.crunch) image.resize(width * fmul, height * fmul, jimp.RESIZE_NEAREST_NEIGHBOR);
+	if (argv.crunch) image.resize(width * final_multiplier * fmul, height * final_multiplier * fmul, jimp.RESIZE_NEAREST_NEIGHBOR);
 	
 	// to clamp the corruption to the image's "area"
 	let og_copy
@@ -97,15 +97,21 @@ module.exports.corruptImage = (image /*JIMP image data (NOT BITMAP)*/, rand /*RN
 	}
 	
 	// main corruption
-	if (argv.shift) {
-		shiftAll(image.bitmap, argv.shift, rand)
+	if (argv.shift && !dontglitch) {
+		let amnt = argv.shift;
+
+		if (argv.randshift > 0)
+			amnt += rand.gen(-argv.randshift, argv.randshift, true);
+
+		amnt = Math.round(amnt);
+		shiftAll(image.bitmap, amnt)
 	}
 	
-	if (argv.regions) {
+	if (argv.regions && !dontglitch) {
 		regionalCorrupt(image.bitmap, argv, rand)
 	}
 	
-	if (argv.splits) {
+	if (argv.splits && !dontglitch) {
 		bufferSplits(image.bitmap, argv.splits, rand);
 	}
 	
