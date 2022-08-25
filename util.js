@@ -45,7 +45,6 @@ module.exports.srand = (seed) => {
 	}
 }
 
-global.loggg = ""
 module.exports.writeBuffer = (target, data, offset, add) => {
 	for(let i = 0; i < data.length; i++){
 		target[i + offset] = data[i] + (add ? add : 0)
@@ -53,9 +52,7 @@ module.exports.writeBuffer = (target, data, offset, add) => {
 }
 
 module.exports.randFloor = (min, max, rand) => {
-	var penis = Math.floor(rand.gen(min, max))
-	loggg += penis + "\n"
-	return penis
+	return Math.floor(rand.gen(min, max))
 }
 
 module.exports.randCeil = (min, max, rand) => {
