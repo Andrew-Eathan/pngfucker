@@ -33,8 +33,18 @@ function check(key, param) {
 
 // go through and set defaults to the command line arguments
 // we'll make this a template so that we can keep dynamic parameters the same
-let argv_template = util.processArgs(process.argv)
-{
+let argv_template = util.processArgs(process.argv); if (argv_template.config) {
+	try {
+		// load cfg file if one is specified
+		let cfg = JSON.parse(fs.readFileSync(argv_template.config));
+		for (let k in cfg)
+			argv_template[k] = cfg[k];
+	}
+	catch (e) {
+		console.error("ERR: Failed to load or parse JSON config: " + e);
+		console.error("Using default configs instead!")
+	}
+} { // dodgy syntax but whatever
 	check("input", "input.png")
 
 	// bitshifts the entire image buffer by this value, negative values go backwards
@@ -47,6 +57,10 @@ let argv_template = util.processArgs(process.argv)
 	
 	// simulates chunks of data vanishing from the image down to the bits, creating a horizontal corrupted "shift" effect
 	check("splits", 2)
+
+	// a percentage 0-100 that controls the minimum and maximum image area the split corruption can begin from
+	check("splitmin", 0)
+	check("splitmax", 100)
 
 	// export format
 	check("format", "png")
@@ -85,7 +99,9 @@ let argv_template = util.processArgs(process.argv)
 
 	// chance for animated corruption frames to be left uncorrupted, 0-100
 	check("breaks", 0)
-	check("randshift", 0) // because shift alone can look ugly, this is how much randomness shift can have
+
+	// because shift alone can look ugly, this is how much randomness shift can have
+	check("randshift", 0)
 }
 
 // handle input/output being folders
@@ -103,7 +119,7 @@ else {
 // self explanatory
 let output_isfolder = argv_template.output ? (argv_template.output.split(".").length == 1) : false
 if (argv_template.output) {
-	if (input_isfolder && !output_isfolder) // would make no sense
+	if (input_isfolder && !output_isfolder) // would make no sense --- FUTURE ME: this would absolutely make sense for pngs -> apng but i'm too lazy to do that, go figure
 	{
 		console.log("WARN: Input is a folder, but output is a file. Ignoring output parameter!")
 		argv_template.output = argv_template.input

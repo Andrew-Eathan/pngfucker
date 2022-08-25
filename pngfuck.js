@@ -21,7 +21,7 @@ module.exports.regionalCorrupt = (bitmap /*JIMP image data, or {width, height, i
 	
 	for(let i = 0; i < settings.regions; i++) {
 		let offset = randFloor(0, (bitmap.width * bitmap.height * 4), srand)
-		let end = offset + randFloor(offset + bitmap.width * settings.rmin, offset + bitmap.width * settings.rmax, srand)
+		let end = offset + randFloor(bitmap.width * 4 * settings.rmin, bitmap.width * 4 * settings.rmax, srand)
 		regionarray.push([offset, end])
 	}
 	
@@ -43,15 +43,22 @@ module.exports.shiftAll = (bitmap /*JIMP image data, or {width, height, image bu
 	if (amount < 0) shl(bitmap.data, Math.abs(amount)); else shr(bitmap.data, amount);
 }
 
-module.exports.bufferSplits = (bitmap /*JIMP bitmap data, or {width, height, image buffer} object*/, splitamount /* number */, srand /*rand object*/) => {
+module.exports.bufferSplits = (bitmap /*JIMP bitmap data, or {width, height, image buffer} object*/, argv /* number */, srand /*rand object*/) => {
 	//split buffer into buffers
-	if (splitamount > 0) {
+	if (argv.splits > 0) {
 		let buffers = []
-		for(let i = 0; i < splitamount; i++) {
-			let lim = randFloor(0, bitmap.width * bitmap.height * 4, srand)
-			buffers.push(bitmap.data.slice(0, lim + randFloor(-bitmap.width, bitmap.width, srand)))
+		for(let i = 0; i < argv.splits; i++) {
+			let max = bitmap.width * bitmap.height * 4;
+			let lim = randFloor(
+				max * argv.splitmin / 100, 
+				max * argv.splitmax / 100, 
+				srand
+			)
+
 			let buffer2 = bitmap.data.slice(lim, bitmap.data.length)
 			shr(buffer2, randFloor(-40, 40, srand))
+
+			buffers.push(bitmap.data.slice(0, lim + randFloor(-bitmap.width, bitmap.width, srand)))
 			buffers.push(buffer2)
 		}
 		
@@ -112,7 +119,7 @@ module.exports.corruptImage = (image /*JIMP image data (NOT BITMAP)*/, rand /*RN
 	}
 	
 	if (argv.splits && !dontglitch) {
-		bufferSplits(image.bitmap, argv.splits, rand);
+		bufferSplits(image.bitmap, argv, rand);
 	}
 	
 	// because png.background is useless
