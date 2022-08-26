@@ -124,7 +124,7 @@ module.exports.corruptImage = (image /*JIMP image data (NOT BITMAP)*/, rand /*RN
 	
 	// because png.background is useless
 	// png shift corruption tends to make a lot of pixels transparent (and black also looks cool as a background for them)
-	if (argv.clamp == 1 && argv.blackbg == 0)
+	if (argv.clamp == 1)
 		for (let i = 0; i < image.bitmap.data.length; i += 4) {
 			let r = image.bitmap.data[i    ];
 			let g = image.bitmap.data[i + 1];
@@ -148,7 +148,7 @@ module.exports.corruptImage = (image /*JIMP image data (NOT BITMAP)*/, rand /*RN
 				image.bitmap.data[i + 3] = a;
 			}
 		}
-	else if (argv.blackbg == 1)
+	if (argv.blackbg == 1)
 		for (let i = 0; i < image.bitmap.data.length; i += 4) {
 			let r = image.bitmap.data[i    ];
 			let g = image.bitmap.data[i + 1];
