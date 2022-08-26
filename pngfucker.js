@@ -84,7 +84,7 @@ let argv_template = util.processArgs(process.argv); if (argv_template.config) {
 	check("seed", (Math.round(Math.random() * 65535)))
 
 	// does some math on transparent images to keep corruption only to opaque pixels
-	check("clamp", 1)
+	check("clamp", 0)
 
 	// usually animated corruption shuffles the seed every frame, this prevents that
 	check("staticseed", 0)
