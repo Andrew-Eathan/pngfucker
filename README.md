@@ -7,10 +7,9 @@ pngfucker also has APNG support, and there's several examples of it after the do
 
 ### Quick story of how this was made
 Have you ever gotten tired of seeing this generic [JPEG glitch effect](https://cdn.discordapp.com/attachments/701973402973634681/916383906243178496/glitch.jpeg) and wanted something else?  
-That's also what happened to me. But then, a bright metaphorical lightbulb appeared above my head.  
-More than a year ago, i was playing with a program i was working on that controlled the game Garry's Mod from my phone in the browser, however, the colors looked off.  
-I tried to bitshift the view, and i got this [peculiar glitching effect](https://cdn.discordapp.com/attachments/868443505045962783/915652437837242398/unknown.png) that looked cool, but i abandoned the controller project at that point because it was super slow.  
-Later, i separated that effect into its own tool called "pngfucker", it stayed like that for 2 months, and then i rewrote it! (So technically, this is a v2, not v1 like the pngfucker.js script file implies) 
+I was working on a program that controlled the game Garry's Mod from my phone in the browser, however, the colors looked off.  
+I tried to bitshift the view, and i got this [peculiar glitching effect](https://cdn.discordapp.com/attachments/868443505045962783/915652437837242398/unknown.png) that looked cool (though i abandoned the controller project at that point because it was super slow)
+Later, i separated that effect into its own tool called "pngfucker", it stayed like that for 2 months, and then i added more features to it!
   
 ### Setup
 This project uses node.js, so you need it to run pngfucker!  
@@ -27,7 +26,7 @@ Generally, the trick to getting a good-looking corrupted image is to know how ea
   
 `node pngfucker.js (args)`  
 
-The complete list of parameters is in the [wiki](https://github.com/Andrew-Eathan/pngfucker/wiki)!
+The complete list of args/parameters is in the [wiki](https://github.com/Andrew-Eathan/pngfucker/wiki)!
 # 
 # 
 ## *\[epilepsy warning just in case, especially at the animated examples (11-20)\]*
@@ -36,6 +35,8 @@ The complete list of parameters is in the [wiki](https://github.com/Andrew-Eatha
   
   
 ### Examples of Usage
+I might remake these examples at some point, because pngfucker has changed so much that they aren't reproducible anymore, especially #1 to #10
+
 ##### #1: Original Image
 !["noooooo"'s profile picture from the Eathan's Realm Discord server](https://cdn.discordapp.com/attachments/868443505045962783/916389615882076190/input.png)  
   
