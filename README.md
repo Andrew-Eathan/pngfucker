@@ -1,5 +1,13 @@
+#
+## i rewrote this in .NET for faster speeds and better readability!  
+it's not perfect, but check out [pngsmasher](https://github.com/andrew-eathan/pngsmasher)!  
+i might make a fully fledged GUI for it later, but for now it has a command-line tool nearly identical to pngfucker :)  
+#
+
+
 ![pngfucker](https://user-images.githubusercontent.com/42521608/166221876-85ced79b-7069-4e0a-ab1b-0d06eb057887.png)
 # pngfucker v1.3
+
 ### What is this?
 pngfucker is a tool that purposefully distorts and glitches images to create an unique effect that has never been implemented before.  
 It's very configurable and the output is randomized with each iteration, plus, now you can specify a numeric seed value!  
